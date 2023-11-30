@@ -1,0 +1,193 @@
+﻿@model IEnumerable<LeaveRequest>
+
+@{
+    ViewData["Title"] = "GetLeavesByPriority";
+    LeaveFlow leaveFlow = ViewBag.flow;
+    var priority = ViewBag.priority;
+}
+<table class="table table-striped table-bordered table-hover align-items-center my-3 text-center">
+    @if (ViewData["Error"] != null)
+    {
+        <h1 class="text-center">@ViewData["Error"]</h1>
+    }
+    else
+    {
+        <thead>
+            <tr>
+                <th>
+                    Employee Name
+                </th>
+                <th>
+                    Starting Date
+                </th>
+                <th>
+                    Ending Date
+                </th>
+                <th>
+                    Employee Reason
+                </th>
+                @for(int i = 1; i < priority -1; i++)
+                {
+                    <th>
+                        @leaveFlow.Levels[i].Role Descision
+                    </th>
+                    <th>
+                        Reason
+                    </th>
+                }
+                <th>
+                    Take Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                int cnt = 0;
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.From)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.To)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Reason)
+                    </td>
+                    @for(int i = 1; i < priority -1; i++)
+                    {
+                        if (item.Priority > i)
+                        {
+                            <td>
+                                Not Valid
+                            </td>
+                            <td>
+                                Not Valid
+                            </td>
+                        }
+                        else if(item.Approvals.Count != 0 && cnt < item.Approvals.Count)
+                        {
+                            <td>
+                                
+                                @item.Approvals[cnt].ApprovalStatus
+                            </td>
+                            <td>
+                                @item.Approvals[cnt++].ApprovalReason
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                Pending
+                            </td>
+                            <td>
+                                --
+                            </td>
+                        }
+                    }
+                    <td>
+                        @{
+                            var exist = item.Approvals.Where(x => x.Priority == priority).ToList();
+                        }
+                        @if (exist.Count == 0)
+                        {
+                            <button type="button" value="@item.LeaveRequestId" class="btn btn-warning myDecisionModal" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <i class="fas fa-info-circle"></i> Pending
+                            </button>
+                        }
+                        else
+                        {
+                            if (exist[0].ApprovalStatus == ApprovalStatus.Accepted)
+                            {
+                                <button type="button" class="btn btn-success">
+                                    <i class="fas fa-check"></i> Approved
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-danger">
+                                    <i class="fas fa-ban"></i> Rejected
+                                </button>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+</table>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Approve/Reject Leave</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="submitForm" asp-action="ApproveRejectLeave" asp-controller="User" method="post">
+                    <input type="hidden" name="LeaveRequestId" id="LeaveRequestId" />
+                    <label class="form-label" for="ApprovalReason">Enter Reason</label>
+                    <textarea class="form-control" rows="10" cols="10" placeholder="Why you want to approve/reject this leave??" type="text" name="ApprovalReason" onchange="document.getElementById('reason-err').innerHTML=''" id="reason" required></textarea>
+                    <span class="text-danger d-block" id="reason-err"></span>
+                    <input type="hidden" name="ApprovalStatus" id="Status" />
+                    <button type="button" class="btn btn-success mt-2" onclick="approve()">Approve</button>
+                    <button type="button" class="btn btn-danger mt-2" onclick="reject()">Reject</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.myDecisionModal', function () {
+            console.log($(this).val());
+            $('#LeaveRequestId').val($(this).val());
+            $('#reason-err').text('');
+        })
+    });
+    function approve() {
+        console.log('approved')
+        $('#Status').val("Accepted");
+        let value = $('#reason').val();
+        console.log(value);
+        if (value.length == 0) {
+            $('#reason-err').text('Reason Field is Required');
+        }
+        else if (value.length < 5) {
+            $('#reason-err').text('Reason must be contain 5 letters');
+        }
+        else if (value.length > 100) {
+            $('#reason-err').text('Reason should be less than 100 characters');
+        }
+        else {
+            $('#submitForm').submit();
+        }
+    }
+    function reject() {
+        console.log('Rejected')
+        $('#Status').val("Rejected");
+        let value = $('#reason').val();
+        console.log(value);
+        if (value.length == 0) {
+            $('#reason-err').text('Reason Field is Required');
+        }
+        else if (value.length < 5) {
+            $('#reason-err').text('Reason must be contain 5 letters');
+        }
+        else if (value.length > 100) {
+            $('#reason-err').text('Reason should be less than 100 characters');
+        }
+        else {
+            $('#submitForm').submit();
+        }
+    }
+</script>

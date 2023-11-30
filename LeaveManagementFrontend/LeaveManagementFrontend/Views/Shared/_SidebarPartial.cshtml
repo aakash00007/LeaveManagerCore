@@ -1,0 +1,61 @@
+﻿@if (User.IsInRole("HR"))
+{
+    <aside id="sidebar">
+        <div class="h-100">
+            <div class="sidebar-logo">
+                <a href="#">Leave Management</a>
+            </div>
+            <!-- Sidebar Navigation -->
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a asp-action="Index" asp-controller="HR" class="sidebar-link">
+                        <i class="fa-solid fa-sliders pe-2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a asp-action="Index" asp-controller="HR" class="sidebar-link">
+                        <i class="fa-regular fa-user pe-2"></i>
+                        Employees
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a asp-action="GetLeavesByPriority" asp-controller="User" class="sidebar-link">
+                        <i class="fa fa-envelope pe-2" aria-hidden="true"></i>
+                        View Requests
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+}
+else
+{
+    <aside id="sidebar">
+        <div class="h-100">
+            <div class="sidebar-logo">
+                <a href="#">CodzSword</a>
+            </div>
+            <!-- Sidebar Navigation -->
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a asp-action="Index" asp-controller="User" class="sidebar-link">
+                        <i class="fa-solid fa-sliders pe-2"></i>
+                        Dashboard
+                    </a>
+                </li>
+
+                @if (!User.IsInRole("Employee"))
+                {
+                    <li class="sidebar-item">
+                        <a asp-action="Index" asp-controller="User" class="sidebar-link">
+                            <i class="fa fa-envelope pe-2" aria-hidden="true"></i>
+                            My Leaves
+                        </a>
+                    </li>
+                }
+
+            </ul>
+        </div>
+    </aside>
+}

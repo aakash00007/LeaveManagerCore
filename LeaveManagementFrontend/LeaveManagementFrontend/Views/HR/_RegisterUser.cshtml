@@ -1,0 +1,53 @@
+﻿@model RegisterAndUserCombineDto
+
+<p>
+    <a class="btn btn-primary my-3" data-bs-toggle="modal" data-bs-target="#Modal">Register User</a>
+</p>
+
+<div class="modal fade" id="Modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModaalLabel">Register User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="container">
+                <div class="row justify-content-center my-3">
+                    <form asp-action="RegisterUser" asp-controller="HR" id="registerForm" method="post">
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label asp-for="UserRegisterationDto.Name" class="form-label"></label>
+                                <input asp-for="UserRegisterationDto.Name" id="name" onchange="document.getElementById('name-err').innerHTML=''" class="form-control">
+                                <span asp-validation-for="UserRegisterationDto.Name" id="name-err" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="UserRegisterationDto.UserName" class="form-label"></label>
+                                <input asp-for="UserRegisterationDto.UserName" id="username" onchange="document.getElementById('username-err').innerHTML=''" class="form-control">
+                                <span asp-validation-for="UserRegisterationDto.UserName" id="username-err" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="UserRegisterationDto.Email" class="form-label"></label>
+                                <input asp-for="UserRegisterationDto.Email" id="email" onchange="document.getElementById('email-err').innerHTML=''" class="form-control">
+                                <span asp-validation-for="UserRegisterationDto.Email" id="email-err" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="UserRegisterationDto.Role" class="control-label my-2">Select Role</label>
+                                <select asp-for="UserRegisterationDto.Role" class="form-control" asp-items='new SelectList(Model.UserRegisterationDto.Roles)'>
+                                </select>
+                                <span asp-validation-for="UserRegisterationDto.Role" class="text-danger"></span>
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-success my-3" value="Save">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

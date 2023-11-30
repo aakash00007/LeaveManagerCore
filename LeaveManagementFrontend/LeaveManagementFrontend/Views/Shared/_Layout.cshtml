@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LeaveManagementFrontend</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LeaveManagementFrontend.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.2/font/bootstrap-icons.min.css" integrity="sha512-D1liES3uvDpPrgk7vXR/hR/sukGn7EtDWEyvpdLsyalQYq6v6YUsTUJmku7B4rcuQ21rf0UTksw2i/2Pdjbd3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+</head>
+<body>
+    
+        <div class="wrapper">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <partial name="_SidebarPartial" />
+            }
+            <div class="main">
+                @if (User.Identity.IsAuthenticated)
+            {
+                <nav class="navbar navbar-expand px-3 border-bottom bg-success">
+
+                        <button class="btn" type="button" data-bs-theme="dark">
+                        <i class="fas fa-bars text-white"></i>
+                        </button>
+                    
+                    <partial name="_LoginPartial" />
+
+                </nav>}
+
+            <main class="content px-3 py-2">
+                <div class="container-fluid">
+                    <div class="mb-3">
+
+                @{
+                    var errorMsg = TempData["Error"]?.ToString();
+                    var successMsg = TempData["Success"]?.ToString();
+                }
+                @if (!String.IsNullOrWhiteSpace(successMsg))
+                {
+                    <div class="alert alert-success">
+                        <b>Success: </b>@successMsg
+                        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="close"></button>
+                    </div>
+                }
+                else if (!String.IsNullOrWhiteSpace(errorMsg))
+                {
+                    <div class="alert alert-danger">
+                        <b>Error: </b>@errorMsg
+                        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="close"></button>
+                    </div>
+                }
+                </div></div>
+                @RenderBody()
+            </main>
+            </div>
+            
+    </div>
+
+ @*    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - LeaveManagementFrontend
+        </div>
+    </footer> *@
+    <script>
+        const toggler = document.querySelector(".btn");
+        toggler.addEventListener("click", function () {
+            document.querySelector("#sidebar").classList.toggle("collapsed");
+        });
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

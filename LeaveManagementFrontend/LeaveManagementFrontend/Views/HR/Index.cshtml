@@ -1,0 +1,124 @@
+﻿@model RegisterAndUserCombineDto
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<partial name="_RegisterUser" />
+
+<table class="table table-striped table-bordered table-hover align-items-center my-3 text-center">
+    @if (ViewData["Error"] != null)
+    {
+        <h1 class="text-center">@ViewData["Error"]</h1>
+    }
+    else
+    {
+        <thead>
+            <tr>
+
+                <th>
+                    Name
+                </th>
+                <th>
+                    UserName
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Role
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.UserDto)
+            {
+                <tr>
+
+                    <td>
+                        @item.User.Name
+                    </td>
+                    <td>
+                        @item.User.UserName
+                    </td>
+                    <td>
+                       
+                        @item.User.Email
+                    </td>
+                    <td>
+                        @item.Role
+                    </td>
+                    <td>
+                        <button class="btn btn-success" onclick="openEditUserModal('@item.User.Id')" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger modalBtn" value="@item.User.Id" data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-trash3"></i></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+</table>
+
+<partial name="_DeleteUser"/>
+<partial name="_EditUser" />
+
+    
+
+
+
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.modalBtn', function () {
+            console.log($(this).val())
+            $('#userId').val($(this).val());
+        })
+        
+    })
+
+    function openEditUserModal(userId) {
+        $.ajax({
+            type: 'GET',
+            url: '/HR/EditUser/' + userId,
+            success: function (data) {
+                $('#editModal input[name="UserRegisterationDto.Id"]').val(data.id);
+                $('#name').val(data.name);
+                $('#username').val(data.userName);
+                $('#editModal input[name="UserRegisterationDto.Email"]').val(data.email);
+                $('#editModal select[name="UserRegisterationDto.Role"]').val(data.role);
+                $('#editModal').modal('show');
+            },
+            error: function () {
+                console.log('Error fetching user details');
+            }
+        });
+    }
+
+    function ValidateEdit() {
+        let name = $("#name").val();
+        let username = $("#username").val();
+        let email = $("#email").val();
+        if (name.length == 0) {
+            $('#name-err').text('Name Field is Required');
+        }
+        else if (!(/^[a-zA-Z ]*$/.test(name))) {
+            $('#name-err').text('Name can only contain letters with spaces');
+        }
+        else if (username.length == 0) {
+            $('#username-err').text('Username Field is Required');
+        }
+        else if (!(/^[a-zA-Z0-9]+$/.test(username))) {
+            $('#username-err').text('Username can only contain Letters and Numbers.');
+        }
+        else if (email.length == 0) {
+            $('#email-err').text('Email Field is Required');
+        }
+        else if(!(/\S+@@\S+\.\S+/.test(email))){
+            $('#email-err').text('Please Enter a Valid Email.');
+        }
+        else {
+            $('#editForm').submit();
+        }
+    }
+</script>
